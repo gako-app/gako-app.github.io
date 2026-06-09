@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gako — Zero-Knowledge Secret Management</title>
+  <meta name="description" content="Gako is an open-source, self-hostable, zero-knowledge secret manager. The server that stores your secrets is cryptographically incapable of reading them.">
+  <link rel="icon" type="image/png" href="gako.png">
+  <style>
+    :root {
+      --blue: #2270c8;
+      --green: #3d9b46;
+      --gold: #e8b430;
+      --ink: #1c2733;
+      --muted: #5a6b7d;
+      --bg: #f7fafc;
+      --card: #ffffff;
+      --border: #e2e9f0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+    header {
+      text-align: center;
+      padding: 72px 0 56px;
+      background: linear-gradient(180deg, #eaf3fb 0%, var(--bg) 100%);
+    }
+    header img { width: 140px; height: 140px; }
+    header h1 {
+      font-size: 3rem;
+      letter-spacing: -0.02em;
+      margin-top: 8px;
+    }
+    header .tagline {
+      font-size: 1.3rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 12px auto 0;
+    }
+    .status {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 4px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .pitch {
+      text-align: center;
+      max-width: 640px;
+      margin: 48px auto;
+      font-size: 1.1rem;
+    }
+    .pitch strong { color: var(--blue); }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 64px;
+    }
+    .feature {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .feature h3 { font-size: 1.05rem; margin-bottom: 8px; }
+    .feature p { font-size: 0.95rem; color: var(--muted); }
+
+    .profiles {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .profiles h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .profiles > p { color: var(--muted); margin-bottom: 24px; }
+    .profile-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+    .profile {
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+    .profile:nth-child(1) { background: var(--blue); }
+    .profile:nth-child(2) { background: var(--green); }
+    .profile:nth-child(3) { background: #b8860b; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    footer .etymology {
+      max-width: 560px;
+      margin: 0 auto 20px;
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <img src="gako.png" alt="Gako logo — a golden key on a blue and green shield">
+      <h1>Gako</h1>
+      <p class="tagline">Zero-knowledge secret management. The server that stores your secrets cannot read them — by design, not by promise.</p>
+      <span class="status">In design — open source &amp; self-hostable</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="pitch">
+      Gako stores passwords, API keys, certificates, and notes encrypted <strong>end-to-end</strong>.
+      Every cryptographic operation happens on your device; the server holds only opaque ciphertext.
+      A complete compromise of the server — its database, its backups, its administrators — reveals no secret content.
+    </p>
+
+    <div class="features">
+      <div class="feature">
+        <h3>🔒 Truly zero-knowledge</h3>
+        <p>No plaintext, no secret keys, and no means to derive them ever reach the server. What the server can and cannot see is explicitly enumerated, not hand-waved.</p>
+      </div>
+      <div class="feature">
+        <h3>⚡ Instant revocation</h3>
+        <p>Removing someone's access is immediate and server-side — no re-encryption, no waiting on other clients, no shared keys to rotate.</p>
+      </div>
+      <div class="feature">
+        <h3>📋 Honest exposure accounting</h3>
+        <p>Know exactly which secrets a departing user has seen, so you rotate what actually needs rotating — a concrete worklist instead of vague unease.</p>
+      </div>
+      <div class="feature">
+        <h3>🧱 Boring, proven crypto</h3>
+        <p>XChaCha20-Poly1305, X25519, Ed25519, and Argon2id, composed in well-trodden ways. No exotic cryptography in the core.</p>
+      </div>
+      <div class="feature">
+        <h3>📈 Scales both ways</h3>
+        <p>From one user on one machine to a large organization with fine-grained, per-secret access control — same architecture, same security model.</p>
+      </div>
+      <div class="feature">
+        <h3>🖥️ Clients everywhere</h3>
+        <p>Web, CLI, desktop, mobile, and browser extension, all sharing one audited cryptographic core.</p>
+      </div>
+    </div>
+
+    <section class="profiles">
+      <h2>One system, three jobs</h2>
+      <p>A single architecture serves every usage profile without changing its security model.</p>
+      <div class="profile-row">
+        <span class="profile">Personal password manager</span>
+        <span class="profile">Team &amp; org secret sharing</span>
+        <span class="profile">Secrets store for machines</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p class="etymology"><em>Named after the Basque word for key — a language isolate, related to nothing else, just like a zero-knowledge server that knows nothing about your secrets.</em></p>
+      <p>Gako is open source and currently in the design stage.</p>
+      <p>Follow along at <a href="https://github.com/gako-app">github.com/gako-app</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>
