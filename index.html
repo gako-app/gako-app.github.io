@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gako — Zero-Knowledge Secret Management</title>
   <meta name="description" content="Gako is an open-source, self-hostable, zero-knowledge secret manager. The server that stores your secrets is cryptographically incapable of reading them.">
+  <link rel="canonical" href="https://gako.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gako.app/">
+  <meta property="og:title" content="Gako — Zero-Knowledge Secret Management">
+  <meta property="og:description" content="Open-source, self-hostable secret manager. The server that stores your secrets cannot read them — by design, not by promise.">
+  <meta property="og:image" content="https://gako.app/gako.png">
   <link rel="icon" type="image/png" href="gako.png">
   <style>
     :root {
@@ -77,6 +83,37 @@
     .feature h3 { font-size: 1.05rem; margin-bottom: 8px; }
     .feature p { font-size: 0.95rem; color: var(--muted); }
 
+    .honesty {
+      margin-bottom: 64px;
+      text-align: center;
+    }
+    .honesty h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .honesty > p { color: var(--muted); max-width: 560px; margin: 0 auto 24px; }
+    .honesty-cols {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+    .honesty-col {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .honesty-col h3 { font-size: 1.05rem; margin-bottom: 10px; }
+    .honesty-col:first-child h3 { color: var(--muted); }
+    .honesty-col:last-child h3 { color: var(--green); }
+    .honesty-col ul { list-style: none; }
+    .honesty-col li {
+      font-size: 0.95rem;
+      color: var(--muted);
+      padding: 6px 0 6px 26px;
+      position: relative;
+    }
+    .honesty-col:first-child li::before { content: "👁"; position: absolute; left: 0; }
+    .honesty-col:last-child li::before { content: "🚫"; position: absolute; left: 0; }
+
     .profiles {
       text-align: center;
       margin-bottom: 64px;
@@ -98,7 +135,7 @@
     }
     .profile:nth-child(1) { background: var(--blue); }
     .profile:nth-child(2) { background: var(--green); }
-    .profile:nth-child(3) { background: #b8860b; }
+    .profile:nth-child(3) { background: #8a6508; }
 
     footer {
       border-top: 1px solid var(--border);
@@ -113,6 +150,22 @@
     }
     footer a { color: var(--blue); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --blue: #6aa9e8;
+        --green: #6dbb75;
+        --ink: #e6edf3;
+        --muted: #9bb0c4;
+        --bg: #0e151d;
+        --card: #18222d;
+        --border: #2a3742;
+      }
+      header { background: linear-gradient(180deg, #14202c 0%, var(--bg) 100%); }
+      .profile:nth-child(1) { background: #1d5ea8; }
+      .profile:nth-child(2) { background: #2f7d38; }
+      .profile:nth-child(3) { background: #7a5a07; }
+    }
   </style>
 </head>
 <body>
@@ -128,7 +181,7 @@
   <main class="wrap">
     <p class="pitch">
       Gako stores passwords, API keys, certificates, and notes encrypted <strong>end-to-end</strong>.
-      Every cryptographic operation happens on your device; the server holds only opaque ciphertext.
+      Everything that touches plaintext happens on your device; the server holds only opaque ciphertext.
       A complete compromise of the server — its database, its backups, its administrators — reveals no secret content.
     </p>
 
@@ -150,14 +203,45 @@
         <p>XChaCha20-Poly1305, X25519, Ed25519, and Argon2id, composed in well-trodden ways. No exotic cryptography in the core.</p>
       </div>
       <div class="feature">
+        <h3>✍️ Tamper-evident</h3>
+        <p>Every secret is signed by the device that wrote it and verified before anything is shown. A server that forges, alters, or rolls back data gets caught by your clients — not trusted.</p>
+      </div>
+      <div class="feature">
+        <h3>🏠 Self-hosted in one binary</h3>
+        <p>One static binary serves the API and the web app; it needs nothing but a data directory. Your secrets stay on your infrastructure — and they're unreadable even there.</p>
+      </div>
+      <div class="feature">
         <h3>📈 Scales both ways</h3>
         <p>From one user on one machine to a large organization with fine-grained, per-secret access control — same architecture, same security model.</p>
       </div>
       <div class="feature">
         <h3>🖥️ Clients everywhere</h3>
-        <p>Web, CLI, desktop, mobile, and browser extension, all sharing one audited cryptographic core.</p>
+        <p>Web, CLI, desktop, mobile, and browser extension — one cryptographic core shared by all of them, audited once instead of five times.</p>
       </div>
     </div>
+
+    <section class="honesty">
+      <h2>Honest about what the server learns</h2>
+      <p>Zero-knowledge applies to your secrets' content — not to everything. Gako enumerates the difference instead of hand-waving it.</p>
+      <div class="honesty-cols">
+        <div class="honesty-col">
+          <h3>The server stores and sees</h3>
+          <ul>
+            <li>Opaque ciphertext and its approximate, bucketed size</li>
+            <li>The access graph — which accounts may read which (encrypted) secrets</li>
+            <li>When clients connect, read, and write</li>
+          </ul>
+        </div>
+        <div class="honesty-col">
+          <h3>The server can never read</h3>
+          <ul>
+            <li>Secret values, titles, URLs, usernames, notes — any content, current or historical</li>
+            <li>Your master password — login sends only a one-way derivative, useless for decrypting anything</li>
+            <li>Any key capable of decrypting anything it stores</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
     <section class="profiles">
       <h2>One system, three jobs</h2>
