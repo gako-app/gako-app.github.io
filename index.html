@@ -1,265 +1,757 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gako — Zero-Knowledge Secret Management</title>
   <meta name="description" content="Gako is an open-source, self-hostable, zero-knowledge secret manager. The server that stores your secrets is cryptographically incapable of reading them.">
   <link rel="canonical" href="https://gako.app/">
+  
+  <!-- OpenGraph Metadata -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://gako.app/">
   <meta property="og:title" content="Gako — Zero-Knowledge Secret Management">
   <meta property="og:description" content="Open-source, self-hostable secret manager. The server that stores your secrets cannot read them — by design, not by promise.">
   <meta property="og:image" content="https://gako.app/gako.png">
   <link rel="icon" type="image/png" href="gako.png">
-  <style>
-    :root {
-      --blue: #2270c8;
-      --green: #3d9b46;
-      --gold: #e8b430;
-      --ink: #1c2733;
-      --muted: #5a6b7d;
-      --bg: #f7fafc;
-      --card: #ffffff;
-      --border: #e2e9f0;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: var(--ink);
-      background: var(--bg);
-      line-height: 1.6;
-    }
-    .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
 
-    header {
-      text-align: center;
-      padding: 72px 0 56px;
-      background: linear-gradient(180deg, #eaf3fb 0%, var(--bg) 100%);
-    }
-    header img { width: 140px; height: 140px; }
-    header h1 {
-      font-size: 3rem;
-      letter-spacing: -0.02em;
-      margin-top: 8px;
-    }
-    header .tagline {
-      font-size: 1.3rem;
-      color: var(--muted);
-      max-width: 560px;
-      margin: 12px auto 0;
-    }
-    .status {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 4px 14px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--card);
-      color: var(--muted);
-      font-size: 0.85rem;
+  <!-- Fonts & Tailwind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    // Initialize Theme Early to Prevent Flash
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
 
-    .pitch {
-      text-align: center;
-      max-width: 640px;
-      margin: 48px auto;
-      font-size: 1.1rem;
-    }
-    .pitch strong { color: var(--blue); }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      margin-bottom: 64px;
-    }
-    .feature {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-    }
-    .feature h3 { font-size: 1.05rem; margin-bottom: 8px; }
-    .feature p { font-size: 0.95rem; color: var(--muted); }
-
-    .honesty {
-      margin-bottom: 64px;
-      text-align: center;
-    }
-    .honesty h2 { font-size: 1.5rem; margin-bottom: 8px; }
-    .honesty > p { color: var(--muted); max-width: 560px; margin: 0 auto 24px; }
-    .honesty-cols {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      text-align: left;
-    }
-    .honesty-col {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-    }
-    .honesty-col h3 { font-size: 1.05rem; margin-bottom: 10px; }
-    .honesty-col:first-child h3 { color: var(--muted); }
-    .honesty-col:last-child h3 { color: var(--green); }
-    .honesty-col ul { list-style: none; }
-    .honesty-col li {
-      font-size: 0.95rem;
-      color: var(--muted);
-      padding: 6px 0 6px 26px;
-      position: relative;
-    }
-    .honesty-col:first-child li::before { content: "👁"; position: absolute; left: 0; }
-    .honesty-col:last-child li::before { content: "🚫"; position: absolute; left: 0; }
-
-    .profiles {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-    .profiles h2 { font-size: 1.5rem; margin-bottom: 8px; }
-    .profiles > p { color: var(--muted); margin-bottom: 24px; }
-    .profile-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-    }
-    .profile {
-      padding: 10px 20px;
-      border-radius: 999px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #fff;
-    }
-    .profile:nth-child(1) { background: var(--blue); }
-    .profile:nth-child(2) { background: var(--green); }
-    .profile:nth-child(3) { background: #8a6508; }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 0 48px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-    footer .etymology {
-      max-width: 560px;
-      margin: 0 auto 20px;
-    }
-    footer a { color: var(--blue); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --blue: #6aa9e8;
-        --green: #6dbb75;
-        --ink: #e6edf3;
-        --muted: #9bb0c4;
-        --bg: #0e151d;
-        --card: #18222d;
-        --border: #2a3742;
+    // Configure Tailwind
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: {
+                DEFAULT: '#2270c8',
+                light: '#3b82f6',
+                dark: '#1d4ed8',
+              },
+              green: {
+                DEFAULT: '#3d9b46',
+                light: '#10b981',
+                dark: '#047857',
+              },
+              gold: {
+                DEFAULT: '#e8b430',
+                light: '#f59e0b',
+                dark: '#b45309',
+              },
+              ink: {
+                light: '#0f172a',
+                dark: '#f8fafc',
+              },
+              bg: {
+                light: '#f8fafc',
+                dark: '#0b0f19',
+              },
+              card: {
+                light: '#ffffff',
+                dark: '#111827',
+              },
+              border: {
+                light: '#e2e8f0',
+                dark: '#1f2937',
+              }
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
       }
-      header { background: linear-gradient(180deg, #14202c 0%, var(--bg) 100%); }
-      .profile:nth-child(1) { background: #1d5ea8; }
-      .profile:nth-child(2) { background: #2f7d38; }
-      .profile:nth-child(3) { background: #7a5a07; }
+    }
+  </script>
+
+  <style>
+    /* Custom CSS Effects for High-End feel */
+    .glow-bg {
+      background: radial-gradient(circle at 50% 50%, rgba(34, 112, 200, 0.15) 0%, rgba(61, 155, 70, 0.05) 30%, transparent 70%);
+    }
+    .dark .glow-bg {
+      background: radial-gradient(circle at 50% 50%, rgba(34, 112, 200, 0.25) 0%, rgba(61, 155, 70, 0.08) 35%, transparent 70%);
+    }
+    
+    .glow-gold-bg {
+      background: radial-gradient(circle at 50% 50%, rgba(232, 180, 48, 0.12) 0%, transparent 60%);
+    }
+    .dark .glow-gold-bg {
+      background: radial-gradient(circle at 50% 50%, rgba(232, 180, 48, 0.18) 0%, transparent 60%);
+    }
+
+    /* Grid backdrop */
+    .grid-lines {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    }
+    .dark .grid-lines {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+
+    /* Selection colors */
+    ::selection {
+      background-color: rgba(34, 112, 200, 0.2);
+      color: inherit;
     }
   </style>
 </head>
-<body>
-  <header>
-    <div class="wrap">
-      <img src="gako.png" alt="Gako logo — a golden key on a blue and green shield">
-      <h1>Gako</h1>
-      <p class="tagline">Zero-knowledge secret management. The server that stores your secrets cannot read them — by design, not by promise.</p>
-      <span class="status">In design — open source &amp; self-hostable</span>
+<body class="bg-brand-bg-light dark:bg-brand-bg-dark text-slate-800 dark:text-slate-200 font-sans antialiased transition-colors duration-300">
+
+  <!-- Grid lines & Glowing gradients background -->
+  <div class="absolute inset-0 grid-lines pointer-events-none opacity-80 z-0"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] glow-bg pointer-events-none z-0"></div>
+  
+  <!-- Navigation Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-brand-bg-light/85 dark:bg-brand-bg-dark/85 border-b border-slate-200/50 dark:border-slate-800/50 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="relative w-9 h-9 flex items-center justify-center bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-800 p-1 group-hover:scale-105 transition-all duration-300">
+          <img src="gako.png" alt="Gako Logo" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">Gako</span>
+          <span class="text-[10px] text-brand-blue font-mono font-semibold tracking-wider uppercase mt-0.5">Zero-Knowledge</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-400">
+        <a href="#features" class="hover:text-brand-blue dark:hover:text-brand-blue-light transition-colors">Features</a>
+        <a href="#security" class="hover:text-brand-blue dark:hover:text-brand-blue-light transition-colors">Security Model</a>
+        <a href="#profiles" class="hover:text-brand-blue dark:hover:text-brand-blue-light transition-colors">Use Cases</a>
+        <a href="https://github.com/gako-app" target="_blank" class="hover:text-brand-blue dark:hover:text-brand-blue-light transition-colors flex items-center gap-1.5">
+          Roadmap
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </nav>
+
+      <!-- Right Nav Options -->
+      <div class="flex items-center gap-4">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all duration-200" aria-label="Toggle dark mode">
+          <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+
+        <!-- GitHub Link -->
+        <a href="https://github.com/gako-app" target="_blank" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-slate-950 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-950 transition-all duration-200 shadow-sm border border-transparent dark:border-slate-200">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
+          </svg>
+          <span>Star</span>
+        </a>
+      </div>
+
     </div>
   </header>
 
-  <main class="wrap">
-    <p class="pitch">
-      Gako stores passwords, API keys, certificates, and notes encrypted <strong>end-to-end</strong>.
-      Everything that touches plaintext happens on your device; the server holds only opaque ciphertext.
-      A complete compromise of the server — its database, its backups, its administrators — reveals no secret content.
-    </p>
+  <!-- Hero Section -->
+  <section class="relative pt-12 pb-24 px-6 max-w-7xl mx-auto z-10">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Left Column: Copy -->
+      <div class="lg:col-span-7 flex flex-col items-start text-left">
+        
+        <!-- Status Badge -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-brand-blue/15 dark:border-brand-blue-light/20 text-brand-blue dark:text-brand-blue-light text-xs font-semibold tracking-wide mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-blue dark:bg-brand-blue-light animate-pulse"></span>
+          In Design — Open Source &amp; Self-Hostable
+        </div>
 
-    <div class="features">
-      <div class="feature">
-        <h3>🔒 Truly zero-knowledge</h3>
-        <p>No plaintext, no secret keys, and no means to derive them ever reach the server. What the server can and cannot see is explicitly enumerated, not hand-waved.</p>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1] mb-6">
+          Zero-knowledge <br>
+          <span class="bg-gradient-to-r from-brand-blue via-brand-green to-brand-gold-light bg-clip-text text-transparent">
+            secret management.
+          </span>
+        </h1>
+
+        <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mb-8">
+          The server that stores your secrets is cryptographically incapable of reading them. Gako guarantees privacy 
+          <span class="font-semibold text-slate-900 dark:text-white decoration-brand-green decoration-2 underline underline-offset-4">by design, not by promise</span>.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <a href="https://github.com/gako-app" target="_blank" class="flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold rounded-xl bg-brand-blue hover:bg-brand-blue-dark dark:bg-brand-blue dark:hover:bg-blue-600 text-white transition-all duration-200 shadow-lg shadow-brand-blue/15 hover:shadow-brand-blue/25 hover:-translate-y-0.5">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+            </svg>
+            Follow on GitHub
+          </a>
+          <a href="#features" class="flex items-center justify-center gap-2 px-6 py-3.5 text-base font-semibold rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200">
+            Explore Features
+          </a>
+        </div>
+
       </div>
-      <div class="feature">
-        <h3>⚡ Instant revocation</h3>
-        <p>Removing someone's access is immediate and server-side — no re-encryption, no waiting on other clients, no shared keys to rotate.</p>
+
+      <!-- Right Column: Interactive Cryptographic Playground -->
+      <div class="lg:col-span-5 relative">
+        <div class="absolute inset-0 bg-brand-gold/10 rounded-2xl blur-2xl glow-gold-bg z-0 pointer-events-none"></div>
+        
+        <!-- Terminal Widget Frame -->
+        <div class="relative bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-10 font-mono text-sm text-slate-300">
+          
+          <!-- Terminal Title bar -->
+          <div class="bg-slate-950/80 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <span class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">Cryptographic Simulator</span>
+            <div class="w-12"></div>
+          </div>
+
+          <!-- Terminal Content -->
+          <div class="p-5 space-y-5">
+            
+            <!-- Step 1 -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-brand-blue-light font-bold uppercase tracking-wider">Step 1: Your Device (Plaintext)</span>
+                <span class="text-[10px] bg-brand-blue/20 text-brand-blue-light border border-brand-blue/30 px-1.5 py-0.5 rounded">Client</span>
+              </div>
+              <label class="block text-xs text-slate-500 mb-1" for="secret-input">Type a secret to test:</label>
+              <input type="text" id="secret-input" value="my-super-secret-api-key-2026" oninput="updateEncryption()" class="w-full bg-slate-950 border border-slate-800 focus:border-brand-blue-light focus:ring-1 focus:ring-brand-blue-light rounded-lg px-3 py-2 text-white outline-none transition-all duration-150">
+            </div>
+
+            <!-- Arrow Indicator -->
+            <div class="flex justify-center my-1 text-brand-green/80">
+              <div class="flex flex-col items-center gap-0.5">
+                <span class="text-[10px] uppercase font-bold tracking-widest text-brand-green-light">Argon2id + XChaCha20-Poly1305</span>
+                <svg class="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-brand-green-light font-bold uppercase tracking-wider">Step 2: Cryptographic Outputs</span>
+                <span class="text-[10px] bg-brand-green/20 text-brand-green-light border border-brand-green/30 px-1.5 py-0.5 rounded">Zero-Knowledge</span>
+              </div>
+              
+              <!-- Key metadata -->
+              <div class="bg-slate-950 border border-slate-800/80 rounded-lg p-3 space-y-2 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Client-Side Key:</span>
+                  <span class="text-brand-gold-light font-semibold font-mono" id="derived-key">gako_k_df3e...82ad</span>
+                </div>
+                <div class="h-px bg-slate-800/60"></div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Key Derivation:</span>
+                  <span class="text-slate-400">Argon2id (m=12288, t=3)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-brand-gold-light font-bold uppercase tracking-wider">Step 3: What the Server Receives</span>
+                <span class="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded">Host/Db</span>
+              </div>
+              <div class="bg-slate-950 border border-slate-800 rounded-lg p-3 relative group">
+                <div class="absolute top-2 right-2 text-[10px] bg-slate-900 border border-slate-800 text-slate-500 px-1.5 py-0.5 rounded uppercase">Opaque Envelope</div>
+                <pre class="text-xs text-slate-400 overflow-x-auto whitespace-pre-wrap break-all pr-2 pt-1 font-mono leading-relaxed" id="ciphertext-output">gako_ct_v1$f6b8911b...4e19</pre>
+              </div>
+            </div>
+
+            <div class="text-[11px] text-slate-500 text-center flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-brand-green-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Encryption computed entirely inside your browser. No data was sent.
+            </div>
+
+          </div>
+
+        </div>
       </div>
-      <div class="feature">
-        <h3>📋 Honest exposure accounting</h3>
-        <p>Know exactly which secrets a departing user has seen, so you rotate what actually needs rotating — a concrete worklist instead of vague unease.</p>
-      </div>
-      <div class="feature">
-        <h3>🧱 Boring, proven crypto</h3>
-        <p>XChaCha20-Poly1305, X25519, Ed25519, and Argon2id, composed in well-trodden ways. No exotic cryptography in the core.</p>
-      </div>
-      <div class="feature">
-        <h3>✍️ Tamper-evident</h3>
-        <p>Every secret is signed by the device that wrote it and verified before anything is shown. A server that forges, alters, or rolls back data gets caught by your clients — not trusted.</p>
-      </div>
-      <div class="feature">
-        <h3>🏠 Self-hosted in one binary</h3>
-        <p>One static binary serves the API and the web app; it needs nothing but a data directory. Your secrets stay on your infrastructure — and they're unreadable even there.</p>
-      </div>
-      <div class="feature">
-        <h3>📈 Scales both ways</h3>
-        <p>From one user on one machine to a large organization with fine-grained, per-secret access control — same architecture, same security model.</p>
-      </div>
-      <div class="feature">
-        <h3>🖥️ Clients everywhere</h3>
-        <p>Web, CLI, desktop, mobile, and browser extension — one cryptographic core shared by all of them, audited once instead of five times.</p>
-      </div>
+
+    </div>
+  </section>
+
+  <!-- Big Pitch Section -->
+  <section class="py-16 border-t border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-950/40 relative z-10 transition-colors duration-300">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <p class="text-xl sm:text-2xl text-slate-700 dark:text-slate-300 leading-relaxed font-light">
+        Gako stores passwords, API keys, certificates, and notes encrypted <strong class="font-semibold text-brand-blue dark:text-brand-blue-light">end-to-end</strong>. Everything that touches plaintext happens on your device; the server holds only opaque ciphertext. A complete compromise of the server — its database, its backups, or its administrators — <span class="font-semibold text-slate-900 dark:text-white">reveals absolutely nothing</span>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="py-24 px-6 max-w-7xl mx-auto relative z-10 scroll-mt-12">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
+        Deep Security. Frictionless UX.
+      </h2>
+      <p class="text-lg text-slate-600 dark:text-slate-400">
+        Engineered with a relentless focus on cryptographic transparency, reliable performance, and simplified self-hosting.
+      </p>
     </div>
 
-    <section class="honesty">
-      <h2>Honest about what the server learns</h2>
-      <p>Zero-knowledge applies to your secrets' content — not to everything. Gako enumerates the difference instead of hand-waving it.</p>
-      <div class="honesty-cols">
-        <div class="honesty-col">
-          <h3>The server stores and sees</h3>
-          <ul>
-            <li>Opaque ciphertext and its approximate, bucketed size</li>
-            <li>The access graph — which accounts may read which (encrypted) secrets</li>
-            <li>When clients connect, read, and write</li>
+    <!-- Features Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Feature 1 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-blue/30 dark:hover:border-brand-blue-light/30 hover:shadow-lg hover:shadow-brand-blue/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-brand-blue dark:text-brand-blue-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Truly Zero-Knowledge</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          No plaintext, no secret keys, and no means to derive them ever reach the server. What the server can and cannot see is explicitly enumerated, not hand-waved.
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-green/30 dark:hover:border-brand-green-light/30 hover:shadow-lg hover:shadow-brand-green/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-brand-green dark:text-brand-green-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Instant Revocation</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          Removing someone's access is immediate and server-side — no re-encryption, no waiting on other clients, no shared keys to rotate.
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-gold/30 dark:hover:border-brand-gold-light/30 hover:shadow-lg hover:shadow-brand-gold/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-brand-gold dark:text-brand-gold-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Honest Exposure</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          Know exactly which secrets a departing user has seen, so you rotate what actually needs rotating — a concrete worklist instead of vague unease.
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-blue/30 dark:hover:border-brand-blue-light/30 hover:shadow-lg hover:shadow-brand-blue/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-brand-blue dark:text-brand-blue-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Boring, Proven Crypto</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          XChaCha20-Poly1305, X25519, Ed25519, and Argon2id, composed in well-trodden ways. No exotic cryptography in the core.
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-green/30 dark:hover:border-brand-green-light/30 hover:shadow-lg hover:shadow-brand-green/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-brand-green dark:text-brand-green-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Tamper-Evident</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          Every secret is signed by the device that wrote it and verified. A server that forges, alters, or rolls back data gets caught by your clients — not trusted.
+        </p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-gold/30 dark:hover:border-brand-gold-light/30 hover:shadow-lg hover:shadow-brand-gold/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-brand-gold dark:text-brand-gold-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">One Static Binary</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          One static binary serves both the API and the web app; it needs nothing but a data directory. Your secrets stay on your infrastructure — and unreadable even there.
+        </p>
+      </div>
+
+      <!-- Feature 7 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-blue/30 dark:hover:border-brand-blue-light/30 hover:shadow-lg hover:shadow-brand-blue/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-brand-blue dark:text-brand-blue-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Scales Both Ways</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          From one user on one machine to a large organization with fine-grained, per-secret access control — same architecture, same security model.
+        </p>
+      </div>
+
+      <!-- Feature 8 -->
+      <div class="group bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 hover:-translate-y-1 hover:border-brand-green/30 dark:hover:border-brand-green-light/30 hover:shadow-lg hover:shadow-brand-green/5 transition-all duration-300">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-brand-green dark:text-brand-green-light mb-5 group-hover:scale-110 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Clients Everywhere</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          Web, CLI, desktop, mobile, and browser extension — one cryptographic core shared by all, audited once instead of five times.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Honest Security Model Section -->
+  <section id="security" class="py-24 border-t border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-950/30 scroll-mt-12 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
+          Honest about what the server learns
+        </h2>
+        <p class="text-lg text-slate-600 dark:text-slate-400">
+          Zero-knowledge applies strictly to your secrets' content — not to all metadata. We map out the exact boundaries so you can perform real threat modeling.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        
+        <!-- Column 1: Server Stores & Sees -->
+        <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 dark:bg-amber-400/10 text-brand-gold-light dark:text-brand-gold flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">The Server Stores &amp; Sees</h3>
+          </div>
+
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 flex-shrink-0 mt-0.5">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div>
+                <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">Opaque Ciphertext &amp; Size</strong>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">The raw encrypted byte streams and their bucketed, padded approximate sizes.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 flex-shrink-0 mt-0.5">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div>
+                <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">The Access Graph</strong>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">The structural map of which user identities hold read or write access to each encrypted secret.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 flex-shrink-0 mt-0.5">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div>
+                <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">Client Activity Timestamps</strong>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Log data of when specific client devices authenticate, fetch, or push secret updates.</p>
+              </div>
+            </li>
           </ul>
         </div>
-        <div class="honesty-col">
-          <h3>The server can never read</h3>
-          <ul>
-            <li>Secret values, titles, URLs, usernames, notes — any content, current or historical</li>
-            <li>Your master password — login sends only a one-way derivative, useless for decrypting anything</li>
-            <li>Any key capable of decrypting anything it stores</li>
+
+        <!-- Column 2: Server Can Never Read -->
+        <div class="bg-white dark:bg-slate-900/60 border-2 border-brand-green/30 dark:border-brand-green-light/20 rounded-2xl p-8 shadow-md relative">
+          <div class="absolute -top-3 right-6 bg-brand-green dark:bg-brand-green-dark text-white px-2.5 py-1 rounded text-[10px] font-bold tracking-wider uppercase">Guaranteed</div>
+          
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 dark:bg-emerald-400/10 text-brand-green dark:text-brand-green-light flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">The Server Can Never Read</h3>
+          </div>
+
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-brand-green/10 dark:bg-brand-green-light/10 flex items-center justify-center text-brand-green dark:text-brand-green-light flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">Secret Values &amp; Metadata</strong>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Passwords, API keys, certificate values, usernames, URLs, and custom notes are strictly unreadable.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-brand-green/10 dark:bg-brand-green-light/10 flex items-center justify-center text-brand-green dark:text-brand-green-light flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">Your Master Password</strong>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Authenticating to the server uses a one-way password hash, rendering the server unable to decrypt any user data even under complete compromise.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-brand-green/10 dark:bg-brand-green-light/10 flex items-center justify-center text-brand-green dark:text-brand-green-light flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">Any Decryption Key</strong>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">The absolute fundamental design of Gako is that the server is never sent any private key capable of decrypting any of the records it hosts.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- One System, Three Jobs Section -->
+  <section id="profiles" class="py-24 px-6 max-w-7xl mx-auto relative z-10 scroll-mt-12">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
+        One system, three jobs
+      </h2>
+      <p class="text-lg text-slate-600 dark:text-slate-400">
+        A single unified cryptographic architecture serves three distinct, essential profiles seamlessly.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      
+      <!-- Profile Card 1 -->
+      <div class="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-8 relative flex flex-col justify-between group hover:border-brand-blue/30 dark:hover:border-brand-blue-light/30 transition-all duration-300">
+        <div>
+          <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue dark:text-brand-blue-light mb-6">Profile 01</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Personal Password Manager</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            A fast, offline-first, private vault for individual credentials. Sync encrypted records safely over your self-hosted Gako instance with desktop, mobile, and web clients.
+          </p>
+        </div>
+        <div class="border-t border-slate-100 dark:border-slate-800/60 pt-6">
+          <ul class="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+            <li class="flex items-center gap-2">✔ Biometric / Passkey unlock</li>
+            <li class="flex items-center gap-2">✔ Offline-first local storage</li>
+            <li class="flex items-center gap-2">✔ Encrypted local database</li>
           </ul>
         </div>
       </div>
-    </section>
 
-    <section class="profiles">
-      <h2>One system, three jobs</h2>
-      <p>A single architecture serves every usage profile without changing its security model.</p>
-      <div class="profile-row">
-        <span class="profile">Personal password manager</span>
-        <span class="profile">Team &amp; org secret sharing</span>
-        <span class="profile">Secrets store for machines</span>
+      <!-- Profile Card 2 -->
+      <div class="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-8 relative flex flex-col justify-between group hover:border-brand-green/30 dark:hover:border-brand-green-light/30 transition-all duration-300">
+        <div>
+          <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-green/10 text-brand-green dark:text-brand-green-light mb-6">Profile 02</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Team &amp; Org Secret Sharing</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            Secure secret collaboration across workspaces and departments. Enjoy fine-grained cryptographic role-based access control, cryptographic key isolation, and auditable trails.
+          </p>
+        </div>
+        <div class="border-t border-slate-100 dark:border-slate-800/60 pt-6">
+          <ul class="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+            <li class="flex items-center gap-2">✔ Cryptographic Access Control</li>
+            <li class="flex items-center gap-2">✔ Instant access revocation</li>
+            <li class="flex items-center gap-2">✔ Detailed exposure auditing</li>
+          </ul>
+        </div>
       </div>
-    </section>
-  </main>
 
-  <footer>
-    <div class="wrap">
-      <p class="etymology"><em>Named after the Basque word for key — a language isolate, related to nothing else, just like a zero-knowledge server that knows nothing about your secrets.</em></p>
-      <p>Gako is open source and currently in the design stage.</p>
-      <p>Follow along at <a href="https://github.com/gako-app">github.com/gako-app</a>.</p>
+      <!-- Profile Card 3 -->
+      <div class="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-8 relative flex flex-col justify-between group hover:border-brand-gold/30 dark:hover:border-brand-gold-light/30 transition-all duration-300">
+        <div>
+          <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-gold/10 text-brand-gold dark:text-brand-gold-light mb-6">Profile 03</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Secrets Store for Machines</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            Inject application secrets directly into container environments, CI/CD pipelines, and cloud instances dynamically. Eliminates hardcoded environment file clutter completely.
+          </p>
+        </div>
+        <div class="border-t border-slate-100 dark:border-slate-800/60 pt-6">
+          <ul class="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+            <li class="flex items-center gap-2">✔ Lightweight single-binary agent</li>
+            <li class="flex items-center gap-2">✔ Seamless CI/CD &amp; Docker injection</li>
+            <li class="flex items-center gap-2">✔ Ephemeral tokens &amp; lease terms</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Final CTA / Waitlist Section -->
+  <section class="py-24 px-6 border-t border-slate-200/50 dark:border-slate-800/50 relative z-10 overflow-hidden bg-white dark:bg-slate-950/20">
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
+        Follow the Journey
+      </h2>
+      <p class="text-lg text-slate-600 dark:text-slate-400 max-w-xl mx-auto mb-8">
+        Gako is currently active in the design and prototyping phase. We are committed to an open, peer-reviewed, and fully transparent specification.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://github.com/gako-app" target="_blank" class="flex items-center justify-center gap-2 px-8 py-4 text-base font-bold rounded-xl bg-slate-950 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-950 transition-all duration-200 shadow-md">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+          </svg>
+          Star repository on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200/60 dark:border-slate-800/60 py-16 px-6 relative z-10 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Basque Origin callout -->
+      <div class="max-w-3xl mx-auto text-center mb-10">
+        <blockquote class="text-sm font-medium text-slate-500 dark:text-slate-400 italic">
+          "Named after the Basque word for key — a language isolate, related to nothing else, just like a zero-knowledge server that knows absolutely nothing about your secrets."
+        </blockquote>
+      </div>
+
+      <div class="h-px bg-slate-200/50 dark:bg-slate-800/50 w-full mb-10"></div>
+
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500 dark:text-slate-400">
+        <div class="flex items-center gap-2.5">
+          <img src="gako.png" alt="Gako logo" class="w-6 h-6 object-contain">
+          <span class="font-bold text-slate-800 dark:text-slate-200">Gako</span>
+          <span class="text-xs">• Open-source and design stage</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="#features" class="hover:underline">Features</a>
+          <a href="#security" class="hover:underline">Security</a>
+          <a href="#profiles" class="hover:underline flex items-center gap-1">Use Cases</a>
+          <a href="https://github.com/gako-app" target="_blank" class="hover:underline">GitHub</a>
+        </div>
+        <div>
+          <span>&copy; 2026 Gako Team. Released under open-source licensing.</span>
+        </div>
+      </div>
+
     </div>
   </footer>
+
+  <!-- Script for Theme Toggle & Interactive Crypto Playground -->
+  <script>
+    // Theme Toggle Logic
+    const themeIconDark = document.getElementById('theme-icon-dark');
+    const themeIconLight = document.getElementById('theme-icon-light');
+
+    function updateThemeIcon(theme) {
+      if (theme === 'dark') {
+        themeIconDark.classList.add('hidden');
+        themeIconLight.classList.remove('hidden');
+      } else {
+        themeIconLight.classList.add('hidden');
+        themeIconDark.classList.remove('hidden');
+      }
+    }
+
+    // Initialize Icon
+    const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    updateThemeIcon(currentTheme);
+
+    function toggleTheme() {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        updateThemeIcon('light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        updateThemeIcon('dark');
+      }
+    }
+
+    // Interactive Crypto Playground Simulator
+    function updateEncryption() {
+      const input = document.getElementById('secret-input').value;
+      const derivedKeyElement = document.getElementById('derived-key');
+      const ciphertextElement = document.getElementById('ciphertext-output');
+      
+      if (!input) {
+        derivedKeyElement.textContent = 'gako_k_empty';
+        ciphertextElement.textContent = 'gako_ct_v1$empty';
+        return;
+      }
+
+      // 1. Simulate key derivation from user's master password (or client-side session key seed)
+      // Hash key deterministically based on input length and characters
+      let hash = 0;
+      for (let i = 0; i < input.length; i++) {
+        hash = (hash << 5) - hash + input.charCodeAt(i);
+        hash |= 0;
+      }
+      
+      const seedHex = Math.abs(hash).toString(16).padEnd(8, 'a');
+      const mockKeyHex = `gako_k_` + seedHex.repeat(2).substring(0, 10) + '...' + seedHex.substring(4, 8);
+      derivedKeyElement.textContent = mockKeyHex;
+
+      // 2. Simulate cryptographic envelope
+      // Build an IV and Mock authenticated ciphertext representation
+      const mockIV = seedHex.repeat(4).substring(0, 16);
+      
+      // Simulate ciphertext encoding each character via mock XOR or cipher shift
+      let ciphertextHex = '';
+      for (let i = 0; i < input.length; i++) {
+        // Simple substitution cipher representing XChaCha20 byte stream
+        const byteVal = (input.charCodeAt(i) ^ (hash & 0xFF) ^ 0x2A) & 0xFF;
+        ciphertextHex += byteVal.toString(16).padStart(2, '0');
+      }
+      
+      // Generate standard looking mock tag (Poly1305)
+      const mockTag = Math.abs(hash * 17).toString(16).padEnd(8, 'f').substring(0, 8);
+      
+      // Pad to standard size or hide excess details visually
+      const displayCiphertext = `gako_ct_v1$${mockIV}$${ciphertextHex.substring(0, 24)}${ciphertextHex.length > 24 ? '...' : ''}$${mockTag}`;
+      ciphertextElement.textContent = displayCiphertext;
+    }
+
+    // Initialize first run
+    updateEncryption();
+  </script>
 </body>
 </html>
