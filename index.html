@@ -93,7 +93,7 @@
     .btn svg { width: 18px; height: 18px; }
     .platforms { margin-top: 14px; font-size: 14px; color: var(--muted); }
 
-    .shot { margin: 48px auto 0; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); background: #1e1e1e; }
+    .shot { margin: 48px auto 0; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); background: #181818; }
 
     /* Sections */
     section { padding: 88px 0 0; }
@@ -111,7 +111,7 @@
     /* Agents */
     .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
     .agents { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; box-shadow: var(--shadow); }
-    .agents .head { font-size: 12px; font-weight: 650; letter-spacing: 0.08em; color: var(--muted); padding: 8px 12px 10px; }
+    .agents .head { font-size: 13px; font-weight: 650; color: var(--muted); padding: 8px 12px 10px; }
     .agent { display: grid; grid-template-columns: 14px 1fr auto; gap: 12px; align-items: center; padding: 12px; border-radius: 10px; }
     .agent + .agent { margin-top: 2px; }
     .agent .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -192,7 +192,7 @@
 
     <main>
       <div class="hero">
-        <span class="badge"><b>0.11.0</b> Latest release · free software</span>
+        <span class="badge"><b>0.20.0</b> Latest release · free software</span>
         <h1>Supervise coding agents across many repositories</h1>
         <p class="lede">Gako is a lean desktop app for a folder of independent Git repositories. See what your agents changed in every one of them, and know which agent needs you. It sits beside your editor, not in place of it.</p>
         <div class="actions">
@@ -258,7 +258,7 @@
             </ul>
           </div>
           <div class="agents" role="img" aria-label="The agent bar: Claude Code working on payments, Codex waiting for approval on orders, Pi finished on auth.">
-            <div class="head">AGENTS</div>
+            <div class="head">Agents</div>
             <div class="agent working"><span class="dot"></span><div><div class="name">Claude Code</div><div class="topic">Add retries to the payments client</div></div><span class="state">Working</span></div>
             <div class="agent waiting"><span class="dot"></span><div><div class="name">Codex</div><div class="topic">Validate order items · services/orders</div></div><span class="state">Waiting for you</span></div>
             <div class="agent done"><span class="dot"></span><div><div class="name">Pi</div><div class="topic">services/auth</div></div><span class="state">Finished</span></div>
