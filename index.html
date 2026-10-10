@@ -150,13 +150,16 @@
     .not span { color: var(--muted); font-size: 15.5px; }
 
     /* Install */
-    .install { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; margin-top: 36px; }
-    pre { margin: 0; background: var(--code-bg); color: var(--code-fg); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; overflow-x: auto; font: 14.5px/1.7 var(--mono); }
-    pre .c { color: #7f8a96; }
-    pre .p { color: #6ee7b7; user-select: none; }
-    .install ul { margin: 0; padding-left: 20px; }
-    .install li { margin-bottom: 10px; color: var(--muted); }
-    .install li b { color: var(--fg); }
+    .downloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 36px; }
+    .downloads .card { display: flex; flex-direction: column; gap: 16px; }
+    .downloads .card h3 { margin: 0; }
+    .downloads .arch { margin: -12px 0 0; color: var(--muted); font-size: 14.5px; }
+    .downloads .btn { align-self: flex-start; }
+    .downloads ol { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+    .downloads li { margin-bottom: 8px; }
+    .downloads li b { color: var(--fg); font-weight: 600; }
+    .downloads code { overflow-wrap: anywhere; }
+    .more { margin-top: 24px; color: var(--muted); font-size: 15.5px; }
 
     /* Footer */
     footer { margin-top: 110px; border-top: 1px solid var(--line); padding: 32px 0 48px; font-size: 14.5px; color: var(--muted); }
@@ -165,7 +168,7 @@
     footer a { color: var(--muted); }
 
     @media (max-width: 860px) {
-      .split, .install { grid-template-columns: 1fr; gap: 32px; }
+      .split { grid-template-columns: 1fr; gap: 32px; }
       section { padding-top: 64px; }
       nav.links a.hide-sm { display: none; }
     }
@@ -192,7 +195,7 @@
 
     <main>
       <div class="hero">
-        <span class="badge"><b>0.20.0</b> Latest release · free software</span>
+        <span class="badge"><b>0.21.0</b> Latest release · free software</span>
         <h1>Supervise coding agents across many repositories</h1>
         <p class="lede">Gako is a lean desktop app for a folder of independent Git repositories. See what your agents changed in every one of them, and know which agent needs you. It sits beside your editor, not in place of it.</p>
         <div class="actions">
@@ -292,21 +295,39 @@
 
       <section id="install">
         <p class="eyebrow">Install</p>
-        <h2>Build it from source</h2>
-        <p class="intro">Prebuilt packages are coming. For now, Gako builds in a few minutes with Rust, Node.js and Git.</p>
-        <div class="install">
-          <pre><span class="p">$ </span>git clone https://github.com/gako-app/gako.git
-<span class="p">$ </span>cd gako
-<span class="p">$ </span>npm install
-<span class="p">$ </span>npm run package
-<span class="c"># Gako.app, Gako.exe or gako, in dist/</span></pre>
-          <ul>
-            <li><b>macOS:</b> copy <code>Gako.app</code> to Applications.</li>
-            <li><b>Windows:</b> keep the <code>Gako</code> folder on a local disk. Rust needs the Visual Studio Build Tools.</li>
-            <li><b>Linux:</b> run <code>gako</code> from its folder. Some systems need Chromium's sandbox helper set up; the README says how.</li>
-            <li>Full instructions, settings and shortcuts are in the <a href="https://github.com/gako-app/gako#readme">README</a>.</li>
-          </ul>
+        <h2>Download Gako</h2>
+        <p class="intro">Gako 0.21.0 for macOS, Windows and Linux. The packages aren’t signed by Apple or Microsoft, so your system asks once before opening Gako.</p>
+        <div class="downloads">
+          <div class="card">
+            <h3>macOS</h3>
+            <p class="arch">Apple silicon</p>
+            <a class="btn primary" href="https://github.com/gako-app/gako/releases/download/v0.21.0/Gako-0.21.0-arm64.dmg">Download .dmg</a>
+            <ol>
+              <li>Open the disk image and drag Gako to Applications.</li>
+              <li>Open Gako. When macOS says it can’t verify it, go to <b>System Settings › Privacy &amp; Security</b> and click <b>Open Anyway</b>.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>Windows</h3>
+            <p class="arch">x64</p>
+            <a class="btn primary" href="https://github.com/gako-app/gako/releases/download/v0.21.0/Gako-0.21.0-windows-x64.zip">Download .zip</a>
+            <ol>
+              <li>Unzip it, and move the <code>Gako</code> folder to a local disk, such as <code>%LOCALAPPDATA%\Programs</code>.</li>
+              <li>Run <code>Gako.exe</code>. If SmartScreen stops it, click <b>More info</b>, then <b>Run anyway</b>.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>Linux</h3>
+            <p class="arch">x64</p>
+            <a class="btn primary" href="https://github.com/gako-app/gako/releases/download/v0.21.0/Gako-0.21.0-linux-x64.tar.gz">Download .tar.gz</a>
+            <ol>
+              <li>Unpack it where you’ll keep Gako.</li>
+              <li>On Ubuntu 24.04 and later, in the <code>gako</code> folder: <code>sudo chown root chrome-sandbox &amp;&amp; sudo chmod 4755 chrome-sandbox</code></li>
+              <li>Run <code>./gako</code>.</li>
+            </ol>
+          </div>
         </div>
+        <p class="more">Every release is on <a href="https://github.com/gako-app/gako/releases">GitHub</a>. To build Gako from source, and for settings and shortcuts, see the <a href="https://github.com/gako-app/gako#readme">README</a>.</p>
       </section>
     </main>
   </div>
